@@ -27,3 +27,7 @@ chromadb==1.5.9                # Persistent local vector database for semantic s
 
 # ── Utilities ────────────────────────────────────────────────────────────────
 werkzeug==3.0.3                # File handling utilities (used by Flask internally)
+groq                           # Groq API client for fast LLM inference
+
+# ── Production Server ────────────────────────────────────────────────────────
+gunicorn==21.2.0               # Production WSGI server (required for Render deployment)
