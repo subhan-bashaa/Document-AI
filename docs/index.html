@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DocuMind AI — Full Project Report</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #07080f;
+      --surface: #0f1120;
+      --surface2: #161929;
+      --border: #1e2340;
+      --accent: #7c6af7;
+      --accent2: #38bdf8;
+      --accent3: #34d399;
+      --accent4: #f59e0b;
+      --text: #e8eaf6;
+      --muted: #8892b0;
+      --danger: #f87171;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* ── PRINT ── */
+    @media print {
+      body { background: #fff; color: #000; }
+      .hero { background: #0a0a2a !important; }
+      .no-print { display: none; }
+      section { page-break-inside: avoid; }
+      .page-break { page-break-before: always; }
+    }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #07080f 0%, #0f1120 40%, #1a0a2e 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 4rem 2rem 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -100px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(124,106,247,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(124,106,247,0.15);
+      border: 1px solid rgba(124,106,247,0.4);
+      color: var(--accent);
+      padding: 0.35rem 1rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff 0%, #a78bfa 50%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.75rem;
+    }
+    .hero .subtitle {
+      font-size: 1.2rem;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+    .badges { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+    .badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.9rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .badge.blue { border-color: #38bdf8; color: #38bdf8; }
+    .badge.purple { border-color: #a78bfa; color: #a78bfa; }
+    .badge.green { border-color: #34d399; color: #34d399; }
+    .badge.orange { border-color: #f59e0b; color: #f59e0b; }
+    .badge.red { border-color: #f87171; color: #f87171; }
+
+    /* ── SECTIONS ── */
+    section { padding: 4rem 0; border-bottom: 1px solid var(--border); }
+    section:last-child { border-bottom: none; }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+    h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+    .section-desc {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 2.5rem;
+      max-width: 700px;
+    }
+
+    /* ── WHAT IT DOES ── */
+    .flow-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 3rem;
+    }
+    .flow-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem 1.5rem;
+      text-align: center;
+      flex: 1;
+      min-width: 180px;
+      max-width: 220px;
+      position: relative;
+      transition: border-color 0.3s;
+    }
+    .flow-card:hover { border-color: var(--accent); }
+    .flow-card .icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .flow-card h4 { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem; }
+    .flow-card p { font-size: 0.82rem; color: var(--muted); }
+    .flow-arrow { font-size: 1.8rem; color: var(--accent); flex-shrink: 0; }
+
+    /* ── GENAI CONNECTION ── */
+    .genai-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+    .genai-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      border-left: 4px solid var(--accent);
+    }
+    .genai-card.teal { border-left-color: var(--accent2); }
+    .genai-card.green { border-left-color: var(--accent3); }
+    .genai-card.gold { border-left-color: var(--accent4); }
+    .genai-card .gtag {
+      display: inline-block;
+      background: rgba(124,106,247,0.15);
+      color: var(--accent);
+      border-radius: 6px;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .genai-card.teal .gtag { background: rgba(56,189,248,0.15); color: var(--accent2); }
+    .genai-card.green .gtag { background: rgba(52,211,153,0.15); color: var(--accent3); }
+    .genai-card.gold .gtag { background: rgba(245,158,11,0.15); color: var(--accent4); }
+    .genai-card h3 { margin-bottom: 0.5rem; font-size: 1.05rem; }
+    .genai-card p { font-size: 0.88rem; color: var(--muted); }
+
+    /* ── RAG PIPELINE ── */
+    .pipeline {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .pipeline-step {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.2rem 1.75rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+    }
+    .pipeline-step:hover { border-color: var(--accent); }
+    .step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+      background: rgba(124,106,247,0.15);
+      color: var(--accent);
+      border: 1px solid rgba(124,106,247,0.3);
+    }
+    .step-content h4 { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+    .step-content p { font-size: 0.85rem; color: var(--muted); }
+    .step-content .tool { font-size: 0.75rem; color: var(--accent2); font-weight: 600; margin-top: 0.3rem; }
+    .pipeline-arrow {
+      width: 2px;
+      height: 28px;
+      background: linear-gradient(to bottom, var(--accent), var(--accent2));
+      margin: 0 auto;
+      opacity: 0.5;
+    }
+
+    /* ── TECH STACK ── */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+    .tech-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .tech-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+    .tech-card h4 { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+    .tech-card .role { font-size: 0.75rem; font-weight: 600; color: var(--accent); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .tech-card p { font-size: 0.83rem; color: var(--muted); }
+
+    /* ── PROJECT STRUCTURE ── */
+    .file-tree {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .file-tree-header {
+      background: var(--surface2);
+      padding: 0.75rem 1.25rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .tree-dot { width: 10px; height: 10px; border-radius: 50%; }
+    pre.tree {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.9;
+      padding: 1.5rem;
+      color: #a8b2d8;
+      overflow-x: auto;
+    }
+    pre.tree .dir { color: #7c6af7; font-weight: 600; }
+    pre.tree .file { color: #cdd6f4; }
+    pre.tree .comment { color: #4a5568; }
+
+    /* ── PHASES TABLE ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    th {
+      background: var(--surface2);
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.85rem 1.25rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .status-done {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(52,211,153,0.1);
+      color: #34d399;
+      border: 1px solid rgba(52,211,153,0.3);
+      border-radius: 999px;
+      padding: 0.2rem 0.75rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    /* ── API REFERENCE ── */
+    .api-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+    .api-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+    }
+    .method {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 0.3rem 0.7rem;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .method.get { background: rgba(52,211,153,0.15); color: #34d399; }
+    .method.post { background: rgba(124,106,247,0.15); color: #a78bfa; }
+    .endpoint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+    .api-desc {
+      padding: 1rem 1.25rem;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    /* ── ARCHITECTURE ── */
+    .arch-diagram {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: #a8b2d8;
+      line-height: 2;
+      overflow-x: auto;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem;
+      text-align: center;
+    }
+    footer p { color: var(--muted); font-size: 0.9rem; }
+    footer strong { color: var(--text); }
+
+    /* Print button */
+    .print-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      border: none;
+      padding: 0.85rem 1.75rem;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(124,106,247,0.4);
+      z-index: 999;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .print-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(124,106,247,0.5); }
+  </style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">🖨️ Save as PDF</button>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  HERO                                                         -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-badge">🎓 Generative AI Internship Project</div>
+    <h1>DocuMind AI 🧠</h1>
+    <p class="subtitle">Responsible-first Document Research Assistant powered by RAG + Google Gemini — Full Project Report</p>
+    <div class="badges">
+      <span class="badge blue">React 18 + Vite</span>
+      <span class="badge green">Python + Flask</span>
+      <span class="badge purple">Google Gemini 2.5 Flash</span>
+      <span class="badge orange">Groq / Llama / Qwen</span>
+      <span class="badge red">ChromaDB</span>
+      <span class="badge blue">Google Embeddings</span>
+      <span class="badge green">PyMuPDF</span>
+      <span class="badge purple">RAG Pipeline</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  WHAT IT DOES                                                 -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Overview</div>
+    <h2>What DocuMind AI Does</h2>
+    <p class="section-desc">
+      DocuMind AI lets you upload any PDF document and instantly ask natural-language questions about it.
+      Every answer is grounded in your uploaded document — with exact page citations — so you can trust the response.
+    </p>
+
+    <div class="flow-row">
+      <div class="flow-card">
+        <div class="icon">📤</div>
+        <h4>Upload PDF</h4>
+        <p>Drag & drop or browse — PDFs up to 16 MB</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-card">
+        <div class="icon">⚙️</div>
+        <h4>Auto-Index</h4>
+        <p>Text extracted, chunked & embedded into ChromaDB</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-card">
+        <div class="icon">💬</div>
+        <h4>Ask Anything</h4>
+        <p>Type your question in plain English</p>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-card">
+        <div class="icon">✅</div>
+        <h4>Grounded Answer</h4>
+        <p>AI answer with source document + page number</p>
+      </div>
+    </div>
+
+    <div class="genai-grid">
+      <div class="flow-card" style="max-width:100%; text-align:left; padding: 1.5rem;">
+        <h4>🔒 Responsible AI</h4>
+        <p style="color:var(--muted); font-size:0.88rem; margin-top:0.4rem;">The system is designed to never hallucinate. If the answer isn't in your documents, it tells you honestly instead of making things up.</p>
+      </div>
+      <div class="flow-card" style="max-width:100%; text-align:left; padding: 1.5rem;">
+        <h4>📑 Source Citations</h4>
+        <p style="color:var(--muted); font-size:0.88rem; margin-top:0.4rem;">Every answer includes the exact PDF filename and page number so you can verify directly.</p>
+      </div>
+      <div class="flow-card" style="max-width:100%; text-align:left; padding: 1.5rem;">
+        <h4>🗂️ Multi-Document</h4>
+        <p style="color:var(--muted); font-size:0.88rem; margin-top:0.4rem;">Upload multiple PDFs and ask questions that span across all of them, or filter to a specific document.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  GENERATIVE AI CONNECTION                                     -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Core Technology</div>
+    <h2>How It Relates to Generative AI</h2>
+    <p class="section-desc">Every core feature of DocuMind AI is a Generative AI concept applied in production.</p>
+
+    <div class="genai-grid">
+      <div class="genai-card">
+        <div class="gtag">Gen AI — LLM</div>
+        <h3>🤖 Large Language Models</h3>
+        <p>Google Gemini 2.5 Flash and Groq-hosted Llama/Qwen models <strong>generate</strong> natural language answers. These are state-of-the-art generative models that produce human-quality text on demand.</p>
+      </div>
+      <div class="genai-card teal">
+        <div class="gtag">Gen AI — Embeddings</div>
+        <h3>🔢 Text Embeddings</h3>
+        <p>Google's <code>text-embedding-004</code> model converts every text chunk into a 768-dimensional vector. This is a core Gen AI technique that lets the system <strong>understand meaning</strong>, not just keywords.</p>
+      </div>
+      <div class="genai-card green">
+        <div class="gtag">Gen AI — RAG Pattern</div>
+        <h3>📚 Retrieval-Augmented Generation</h3>
+        <p>RAG is the most important Gen AI design pattern for production systems. It <strong>grounds</strong> the generative model's output in real, verifiable data — eliminating hallucination.</p>
+      </div>
+      <div class="genai-card gold">
+        <div class="gtag">Gen AI — Prompt Engineering</div>
+        <h3>✍️ Prompt Engineering</h3>
+        <p>A carefully crafted system prompt tells the LLM: <em>"Answer ONLY from the provided context. Cite your sources. Don't use training data."</em> This is a critical Gen AI skill for responsible systems.</p>
+      </div>
+      <div class="genai-card">
+        <div class="gtag">Gen AI — Vector Search</div>
+        <h3>🔍 Semantic Similarity Search</h3>
+        <p>ChromaDB stores the embedding vectors and performs <strong>cosine similarity search</strong> — a foundational Gen AI infrastructure component that finds meaning-based matches, not just text matches.</p>
+      </div>
+      <div class="genai-card teal">
+        <div class="gtag">Gen AI — Responsible AI</div>
+        <h3>🛡️ Responsible AI Design</h3>
+        <p>The system is architected to be transparent and trustworthy — a key principle in modern Gen AI. It provides source citations, refuses to hallucinate, and keeps API calls server-side.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  RAG PIPELINE                                                 -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<section class="page-break">
+  <div class="container">
+    <div class="section-label">Pipeline</div>
+    <h2>RAG Pipeline — Step by Step</h2>
+    <p class="section-desc">The complete flow from raw PDF to AI-generated, source-cited answer.</p>
+
+    <div class="pipeline">
+      <div class="pipeline-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>📄 PDF Upload & Storage</h4>
+          <p>User uploads a PDF via the React frontend. Flask validates file type (PDF only) and size (max 16 MB), then saves it to the <code>documents/</code> directory.</p>
+          <div class="tool">Tool: Flask · PyMuPDF · file_utils.py</div>
+        </div>
+      </div>
+      <div class="pipeline-arrow"></div>
+
+      <div class="pipeline-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>✂️ Text Extraction</h4>
+          <p>PyMuPDF (<code>fitz</code>) extracts raw text from every page of the PDF, preserving page numbers for later citation. Handles multi-page documents efficiently.</p>
+          <div class="tool">Tool: PyMuPDF · rag/loader.py</div>
+        </div>
+      </div>
+      <div class="pipeline-arrow"></div>
+
+      <div class="pipeline-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>🔪 Text Chunking</h4>
+          <p>Extracted text is split into overlapping ~500-token chunks. Overlap ensures context isn't lost at chunk boundaries — a critical technique for RAG quality.</p>
+          <div class="tool">Tool: rag/chunker.py</div>
+        </div>
+      </div>
+      <div class="pipeline-arrow"></div>
+
+      <div class="pipeline-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>🔢 Embedding Generation <span style="color:var(--accent4)">(Gen AI)</span></h4>
+          <p>Each chunk is converted into a 768-dimensional embedding vector using Google's <code>text-embedding-004</code> model. This captures semantic meaning, not just words.</p>
+          <div class="tool">Tool: Google Generative AI · rag/embeddings.py</div>
+        </div>
+      </div>
+      <div class="pipeline-arrow"></div>
+
+      <div class="pipeline-step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h4>🗄️ Vector Storage (ChromaDB)</h4>
+          <p>Embedding vectors are stored in ChromaDB along with metadata (source filename, page number, chunk text). ChromaDB persists this data to disk for future queries.</p>
+          <div class="tool">Tool: ChromaDB · rag/vectorstore.py</div>
+        </div>
+      </div>
+      <div class="pipeline-arrow"></div>
+
+      <div class="pipeline-step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <h4>🔍 Semantic Retrieval <span style="color:var(--accent4)">(Gen AI)</span></h4>
+          <p>User's question is embedded using the same model. ChromaDB performs cosine similarity search and returns the top-K most semantically relevant chunks.</p>
+          <div class="tool">Tool: ChromaDB · rag/retriever.py · Top-K=5</div>
+        </div>
+      </div>
+      <div class="pipeline-arrow"></div>
+
+      <div class="pipeline-step">
+        <div class="step-num">7</div>
+        <div class="step-content">
+          <h4>✍️ RAG Prompt Engineering <span style="color:var(--accent4)">(Gen AI)</span></h4>
+          <p>A grounding prompt is built: <em>"Answer ONLY from these document excerpts. Cite sources. Do not hallucinate."</em> The top-K chunks are injected as context, with strict rules.</p>
+          <div class="tool">Tool: rag/generator.py · _build_rag_prompt()</div>
+        </div>
+      </div>
+      <div class="pipeline-arrow"></div>
+
+      <div class="pipeline-step">
+        <div class="step-num">8</div>
+        <div class="step-content">
+          <h4>✨ LLM Generation — Groq / Gemini <span style="color:var(--accent4)">(Gen AI)</span></h4>
+          <p>The RAG prompt is sent to Groq (primary, ultra-fast: Llama/Qwen) or Google Gemini 2.5 Flash (fallback). The LLM generates a grounded natural-language answer from the context only.</p>
+          <div class="tool">Tool: Groq API · Google Gemini API · rag/generator.py</div>
+        </div>
+      </div>
+      <div class="pipeline-arrow"></div>
+
+      <div class="pipeline-step">
+        <div class="step-num">9</div>
+        <div class="step-content">
+          <h4>💬 Response with Source Citations</h4>
+          <p>The answer + deduplicated source list (document name + page) is returned to the React frontend and displayed in the chat interface with source tags the user can verify.</p>
+          <div class="tool">Tool: routes/chat.py · ChatArea.jsx</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  TECH STACK                                                   -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Technology</div>
+    <h2>Full Tech Stack</h2>
+    <p class="section-desc">Every technology used, why it was chosen, and what role it plays.</p>
+
+    <div class="tech-grid">
+      <div class="tech-card">
+        <div class="tech-icon" style="background:rgba(97,218,251,0.1);">⚛️</div>
+        <div>
+          <div class="role">Frontend</div>
+          <h4>React 18 + Vite 8</h4>
+          <p>Component-based UI with hot-module replacement. Dark-themed, responsive layout with drag-and-drop PDF upload and real-time chat interface.</p>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon" style="background:rgba(100,180,100,0.1);">🐍</div>
+        <div>
+          <div class="role">Backend</div>
+          <h4>Python 3.10+ + Flask 3</h4>
+          <p>Lightweight REST API. Blueprint-based routing, global JSON error handlers (400/404/405/413/500), CORS for React dev server, centralized config with .env validation.</p>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon" style="background:rgba(66,133,244,0.1);">G</div>
+        <div>
+          <div class="role">LLM (Primary Fallback)</div>
+          <h4>Google Gemini 2.5 Flash</h4>
+          <p>State-of-the-art multimodal language model. Used for generating grounded answers when no Groq key is configured. Fast, reliable, and free-tier available.</p>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon" style="background:rgba(255,107,53,0.1);">⚡</div>
+        <div>
+          <div class="role">LLM (Primary)</div>
+          <h4>Groq API (Llama / Qwen)</h4>
+          <p>Ultra-fast LLM inference. Tries multiple model candidates (openai/gpt-oss-20b, qwen/qwen3) with automatic fallback chain to Gemini if unavailable.</p>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon" style="background:rgba(56,189,248,0.1);">G</div>
+        <div>
+          <div class="role">Embeddings (Gen AI)</div>
+          <h4>Google text-embedding-004</h4>
+          <p>Converts text chunks into 768-dimensional semantic vectors. Same model used for both document indexing and query embedding to ensure consistent similarity scoring.</p>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon" style="background:rgba(255,107,53,0.1);">🗄️</div>
+        <div>
+          <div class="role">Vector Database</div>
+          <h4>ChromaDB</h4>
+          <p>Local vector database for semantic similarity search. Persists embedding vectors + metadata to disk. Supports filtering by document source for targeted queries.</p>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon" style="background:rgba(150,150,150,0.1);">📄</div>
+        <div>
+          <div class="role">PDF Processing</div>
+          <h4>PyMuPDF (fitz)</h4>
+          <p>Extracts text from PDFs page by page with high fidelity. Preserves page numbers for source citation. Works on text-based PDFs (not scanned image-only PDFs).</p>
+        </div>
+      </div>
+      <div class="tech-card">
+        <div class="tech-icon" style="background:rgba(124,106,247,0.1);">💅</div>
+        <div>
+          <div class="role">Styling</div>
+          <h4>Vanilla CSS</h4>
+          <p>Custom dark-theme design system using CSS variables. Glassmorphism cards, gradient text, subtle animations, and a fully responsive layout without external UI frameworks.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  PROJECT STRUCTURE                                            -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<section class="page-break">
+  <div class="container">
+    <div class="section-label">Codebase</div>
+    <h2>Complete Project Structure</h2>
+    <p class="section-desc">Every file and directory — what it is and what it does.</p>
+
+    <div class="file-tree">
+      <div class="file-tree-header">
+        <span class="tree-dot" style="background:#ff5f57"></span>
+        <span class="tree-dot" style="background:#febc2e"></span>
+        <span class="tree-dot" style="background:#28c840"></span>
+        &nbsp; documind-ai/ — Project Root
+      </div>
+      <pre class="tree">
+<span class="dir">documind-ai/</span>
+├── <span class="file">README.md</span>                   <span class="comment"># Full project documentation</span>
+├── <span class="file">.gitignore</span>                  <span class="comment"># Excludes .env, venv, node_modules, __pycache__</span>
+│
+├── <span class="dir">backend/</span>                    <span class="comment"># Python Flask REST API</span>
+│   ├── <span class="file">app.py</span>                  <span class="comment"># Entry point: blueprints, CORS, error handlers</span>
+│   ├── <span class="file">config.py</span>               <span class="comment"># Centralized config — reads all env vars from .env</span>
+│   ├── <span class="file">reindex.py</span>              <span class="comment"># CLI: wipe and rebuild entire ChromaDB index</span>
+│   ├── <span class="file">requirements.txt</span>        <span class="comment"># All Python dependencies with versions</span>
+│   ├── <span class="file">.env</span>                    <span class="comment"># API keys (NOT in Git — excluded by .gitignore)</span>
+│   │
+│   ├── <span class="dir">rag/</span>                    <span class="comment"># Core RAG pipeline modules</span>
+│   │   ├── <span class="file">__init__.py</span>
+│   │   ├── <span class="file">loader.py</span>           <span class="comment"># PDF text extraction via PyMuPDF</span>
+│   │   ├── <span class="file">chunker.py</span>          <span class="comment"># Overlapping text chunking algorithm</span>
+│   │   ├── <span class="file">embeddings.py</span>       <span class="comment"># Google text-embedding-004 API calls</span>
+│   │   ├── <span class="file">vectorstore.py</span>      <span class="comment"># ChromaDB read/write/query operations</span>
+│   │   ├── <span class="file">retriever.py</span>        <span class="comment"># Phase 9: semantic similarity search</span>
+│   │   └── <span class="file">generator.py</span>        <span class="comment"># Phase 10+11: RAG prompt + Groq/Gemini LLM call</span>
+│   │
+│   ├── <span class="dir">routes/</span>                 <span class="comment"># Flask Blueprint route handlers</span>
+│   │   ├── <span class="file">__init__.py</span>
+│   │   ├── <span class="file">health.py</span>           <span class="comment"># GET /api/health — server liveness check</span>
+│   │   ├── <span class="file">documents.py</span>        <span class="comment"># GET/POST /api/documents — list + upload PDFs</span>
+│   │   └── <span class="file">chat.py</span>             <span class="comment"># POST /api/chat — full RAG Q&amp;A endpoint</span>
+│   │
+│   ├── <span class="dir">utils/</span>                  <span class="comment"># Shared utility functions</span>
+│   │   ├── <span class="file">__init__.py</span>
+│   │   ├── <span class="file">file_utils.py</span>       <span class="comment"># File type validation, safe filename generation</span>
+│   │   └── <span class="file">helpers.py</span>          <span class="comment"># General-purpose helper functions</span>
+│   │
+│   ├── <span class="dir">documents/</span>              <span class="comment"># Uploaded PDF files (auto-created on first upload)</span>
+│   └── <span class="dir">vectorstore/</span>            <span class="comment"># ChromaDB persistent vector data (auto-created)</span>
+│
+└── <span class="dir">frontend/</span>                   <span class="comment"># React + Vite application</span>
+    ├── <span class="file">index.html</span>              <span class="comment"># HTML entry point with SEO meta tags</span>
+    ├── <span class="file">vite.config.js</span>          <span class="comment"># Vite config with /api proxy to Flask :5000</span>
+    ├── <span class="file">package.json</span>            <span class="comment"># Node.js dependencies and npm scripts</span>
+    └── <span class="dir">src/</span>
+        ├── <span class="file">main.jsx</span>            <span class="comment"># React 18 entry: ReactDOM.createRoot()</span>
+        ├── <span class="file">App.jsx</span>             <span class="comment"># Root component, global state, API orchestration</span>
+        ├── <span class="file">App.css</span>             <span class="comment"># Global layout: sidebar + main area grid</span>
+        ├── <span class="file">index.css</span>           <span class="comment"># Design system: CSS variables, base styles</span>
+        ├── <span class="dir">components/</span>
+        │   ├── <span class="file">Header.jsx</span>      <span class="comment"># Top navigation bar (logo + app name)</span>
+        │   ├── <span class="file">Sidebar.jsx</span>     <span class="comment"># PDF upload dropzone + document list</span>
+        │   ├── <span class="file">ChatArea.jsx</span>    <span class="comment"># Chat interface: input + message history</span>
+        │   ├── <span class="file">EmptyState.jsx</span>  <span class="comment"># Welcome screen shown before first upload</span>
+        │   ├── <span class="file">LoadingDots.jsx</span> <span class="comment"># Animated typing indicator</span>
+        │   └── <span class="file">components.css</span>  <span class="comment"># All component-level styles</span>
+        ├── <span class="dir">pages/</span>              <span class="comment"># Reserved for future multi-page routing</span>
+        └── <span class="dir">services/</span>
+            └── <span class="file">api.js</span>          <span class="comment"># Axios client: upload, list, chat, summarize</span>
+      </pre>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  DEVELOPMENT PHASES                                           -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Progress</div>
+    <h2>All 14 Development Phases</h2>
+    <p class="section-desc">The project was built phase-by-phase — all 14 phases are now complete.</p>
+
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden;">
+      <table>
+        <thead>
+          <tr>
+            <th>Phase</th>
+            <th>Feature</th>
+            <th>What Was Built</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Project Setup</strong></td><td>Repo structure, .gitignore, README, virtual environment</td><td><span class="status-done">✅ Complete</span></td></tr>
+          <tr><td>2</td><td><strong>Flask Backend</strong></td><td>app.py, config.py, CORS, global error handlers, startup validation</td><td><span class="status-done">✅ Complete</span></td></tr>
+          <tr><td>3</td><td><strong>React Frontend</strong></td><td>Vite project, component architecture, dark theme CSS design system</td><td><span class="status-done">✅ Complete</span></td></tr>
+          <tr><td>4</td><td><strong>PDF Upload</strong></td><td>Drag-and-drop upload UI, Flask multipart handler, file validation</td><td><span class="status-done">✅ Complete</span></td></tr>
+          <tr><td>5</td><td><strong>Text Extraction</strong></td><td>PyMuPDF loader, page-by-page extraction, page number tracking</td><td><span class="status-done">✅ Complete</span></td></tr>
+          <tr><td>6</td><td><strong>Chunking</strong></td><td>Overlapping ~500-token chunker to preserve cross-boundary context</td><td><span class="status-done">✅ Complete</span></td></tr>
+          <tr><td>7</td><td><strong>Embeddings</strong></td><td>Google text-embedding-004 API integration, batch embedding pipeline</td><td><span class="status-done">✅ Complete</span></td></tr>
+          <tr><td>8</td><td><strong>ChromaDB Vector Store</strong></td><td>Local vector DB, persistent storage, metadata (source, page) indexing</td><td><span class="status-done">✅ Complete</span></td></tr>
+          <tr><td>9</td><td><strong>Semantic Retrieval</strong></td><td>Query embedding, cosine similarity search, top-K retrieval, source filtering</td><td><span class="status-done">✅ Complete</span></td></tr>
+          <tr><td>10</td><td><strong>Gemini / Groq Integration</strong></td><td>Groq primary + Gemini fallback, model candidate chain, error handling</td><td><span class="status-done">✅ Complete</span></td></tr>
+          <tr><td>11</td><td><strong>RAG Prompt Engineering</strong></td><td>Grounding prompt with strict rules, relevance threshold filtering, context injection</td><td><span class="status-done">✅ Complete</span></td></tr>
+          <tr><td>12</td><td><strong>Chat UI</strong></td><td>ChatArea component, message history, loading animation, input handling</td><td><span class="status-done">✅ Complete</span></td></tr>
+          <tr><td>13</td><td><strong>Source Display</strong></td><td>Source citations rendered per answer with document name and page number</td><td><span class="status-done">✅ Complete</span></td></tr>
+          <tr><td>14</td><td><strong>Document Summarization</strong></td><td>One-click AI summary endpoint, Sidebar summarize button, summary display</td><td><span class="status-done">✅ Complete</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  API REFERENCE                                                -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<section class="page-break">
+  <div class="container">
+    <div class="section-label">API</div>
+    <h2>API Reference</h2>
+    <p class="section-desc">All REST endpoints exposed by the Flask backend.</p>
+
+    <div class="api-block">
+      <div class="api-header">
+        <span class="method get">GET</span>
+        <span class="endpoint">/api/health</span>
+        <span style="color:var(--muted); font-size:0.83rem; margin-left:auto;">Server liveness check</span>
+      </div>
+      <div class="api-desc">Returns server status. Used by frontend to confirm backend is reachable. Returns <code>200 OK</code> with status message.</div>
+    </div>
+
+    <div class="api-block">
+      <div class="api-header">
+        <span class="method get">GET</span>
+        <span class="endpoint">/api/documents</span>
+        <span style="color:var(--muted); font-size:0.83rem; margin-left:auto;">List all uploaded documents</span>
+      </div>
+      <div class="api-desc">Returns a JSON array of all indexed documents with ID, filename, page count, and upload timestamp.</div>
+    </div>
+
+    <div class="api-block">
+      <div class="api-header">
+        <span class="method post">POST</span>
+        <span class="endpoint">/api/documents/upload</span>
+        <span style="color:var(--muted); font-size:0.83rem; margin-left:auto;">Upload & index a PDF</span>
+      </div>
+      <div class="api-desc">
+        Accepts <code>multipart/form-data</code> with a <code>file</code> field. Validates file type (PDF only) and size (max 16 MB).
+        Triggers the full RAG indexing pipeline: extract → chunk → embed → store.
+        Returns document ID and number of chunks indexed.
+        <br/><br/>Errors: <code>400</code> (bad file) · <code>413</code> (too large) · <code>500</code> (indexing failed)
+      </div>
+    </div>
+
+    <div class="api-block">
+      <div class="api-header">
+        <span class="method post">POST</span>
+        <span class="endpoint">/api/chat</span>
+        <span style="color:var(--muted); font-size:0.83rem; margin-left:auto;">RAG Q&A — full pipeline</span>
+      </div>
+      <div class="api-desc">
+        Body: <code>{"question": "...", "source_filter": "optional_file.pdf"}</code><br/>
+        Runs the full RAG pipeline: embeds question → retrieves top-K chunks → builds grounding prompt → calls Groq/Gemini → returns answer + source citations.<br/><br/>
+        Max question length: 2000 characters.<br/>
+        Errors: <code>400</code> (bad question) · <code>503</code> (no docs indexed) · <code>500</code> (LLM failure)
+      </div>
+    </div>
+
+    <div class="api-block">
+      <div class="api-header">
+        <span class="method post">POST</span>
+        <span class="endpoint">/api/documents/{id}/summary</span>
+        <span style="color:var(--muted); font-size:0.83rem; margin-left:auto;">AI document summary</span>
+      </div>
+      <div class="api-desc">Generates an AI summary of the entire specified document using the LLM. Returns a comprehensive text summary of the document's key topics and content.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  ENVIRONMENT VARIABLES                                        -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<section>
+  <div class="container">
+    <div class="section-label">Configuration</div>
+    <h2>Environment Variables</h2>
+    <p class="section-desc">All config is driven by environment variables in <code>backend/.env</code> — never hard-coded.</p>
+
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden;">
+      <table>
+        <thead>
+          <tr><th>Variable</th><th>Required</th><th>Default</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>GEMINI_API_KEY</code></td><td style="color:#34d399; font-weight:700;">✅ Required</td><td>—</td><td>Google Gemini API key — get free at aistudio.google.com</td></tr>
+          <tr><td><code>GROQ_API_KEY</code></td><td style="color:var(--muted);">Optional</td><td>—</td><td>Groq API key — enables faster inference; falls back to Gemini</td></tr>
+          <tr><td><code>FLASK_PORT</code></td><td style="color:var(--muted);">Optional</td><td><code>5000</code></td><td>Port the Flask server listens on</td></tr>
+          <tr><td><code>FLASK_ENV</code></td><td style="color:var(--muted);">Optional</td><td><code>development</code></td><td><code>development</code> or <code>production</code></td></tr>
+          <tr><td><code>MAX_UPLOAD_SIZE_MB</code></td><td style="color:var(--muted);">Optional</td><td><code>16</code></td><td>Maximum PDF upload size in megabytes</td></tr>
+          <tr><td><code>TOP_K_RESULTS</code></td><td style="color:var(--muted);">Optional</td><td><code>5</code></td><td>Number of document chunks retrieved per query</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  FOOTER                                                       -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<footer>
+  <p style="font-size:1.5rem; margin-bottom:0.5rem;">🧠</p>
+  <p><strong>DocuMind AI</strong> — Generative AI Internship Project</p>
+  <p style="margin-top:0.4rem;">Built by <strong>Subhan Basha</strong> &nbsp;·&nbsp; GitHub: <a href="https://github.com/subhan-bashaa/Document-AI" style="color:var(--accent); text-decoration:none;">@subhan-bashaa/Document-AI</a></p>
+  <p style="margin-top:1rem; font-size:0.8rem; color:#4a5568;">All 14 phases complete · React + Flask + Gemini + Groq + ChromaDB + RAG</p>
+</footer>
+
+</body>
+</html>
