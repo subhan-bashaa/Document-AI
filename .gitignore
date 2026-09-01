@@ -1,0 +1,56 @@
+# .gitignore – Files Git should NEVER track
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── CRITICAL: API Keys and Secrets ───────────────────────────────────────────
+# These files contain your private API keys. NEVER commit them.
+backend/.env
+.env
+*.env
+
+# ── Python Virtual Environment ───────────────────────────────────────────────
+# The venv folder is large and can be recreated with: pip install -r requirements.txt
+venv/
+env/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── ChromaDB Vector Database ─────────────────────────────────────────────────
+# These are generated files. They can be rebuilt by re-uploading documents.
+backend/vectorstore/chroma_db/
+
+# ── Uploaded Documents ───────────────────────────────────────────────────────
+# Do not commit user-uploaded PDFs to version control
+backend/documents/
+
+# ── React / Node.js ──────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# ── IDE and Editor files ─────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.suo
+*.user
+
+# ── Operating System files ───────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

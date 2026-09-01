@@ -1,0 +1,29 @@
+# requirements.txt – Python dependencies for DocuMind AI backend
+# Install all of these with:  pip install -r requirements.txt
+#
+# NOTE: You are running Python 3.13.
+# Version pins are chosen to have pre-built wheels for Python 3.13
+# so that NO C++ compiler (Visual Studio) is needed during install.
+
+# ── Web Framework ────────────────────────────────────────────────────────────
+flask==3.0.3                   # The web framework that powers our REST API
+flask-cors==4.0.1              # Allows React (port 5173) to call Flask (port 5000)
+
+# ── Environment Variables ────────────────────────────────────────────────────
+python-dotenv==1.0.1           # Loads .env file so we never hard-code API keys
+
+# ── Google AI (Gemini + Embeddings) ─────────────────────────────────────────
+google-generativeai==0.8.3     # Google Gemini API + embedding models
+
+# ── PDF Processing ───────────────────────────────────────────────────────────
+# PyMuPDF 1.26.x ships pre-built wheels for Python 3.13 on Windows.
+# Do NOT downgrade to 1.24.x — those versions require Visual Studio to compile.
+PyMuPDF==1.26.1                # Extract text from PDF files, page by page
+
+# ── Vector Database ──────────────────────────────────────────────────────────
+# chromadb 1.x ships pre-built wheels for Python 3.13 on Windows (cp39-abi3).
+# No Microsoft C++ Build Tools required.
+chromadb==1.5.9                # Persistent local vector database for semantic search
+
+# ── Utilities ────────────────────────────────────────────────────────────────
+werkzeug==3.0.3                # File handling utilities (used by Flask internally)

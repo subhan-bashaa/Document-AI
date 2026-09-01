@@ -1,0 +1,7 @@
+// components/.gitkeep
+// This folder will contain reusable React components:
+// - UploadArea.jsx     (Phase 4)
+// - DocumentList.jsx   (Phase 4)
+// - ChatMessage.jsx    (Phase 12)
+// - SourceCard.jsx     (Phase 13)
+// - LoadingDots.jsx    (Phase 12)

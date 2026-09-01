@@ -1,0 +1,4 @@
+// pages/.gitkeep
+// This folder will contain full page components:
+// - HomePage.jsx      (Phase 12 - Main chat interface)
+// - UploadPage.jsx    (Phase 4 - If we use separate pages)
